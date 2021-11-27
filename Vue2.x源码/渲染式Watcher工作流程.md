@@ -85,7 +85,7 @@ new Watcher(vm, updateComponent, noop, {
 - `initState`中，会执行`observe(data)`，这一步是根据值创建`Observe`对象，并添加为数据的`__ob__`属性。以下为构造函数主要过程。
 - `def(value, '__ob__', this)`首先是将实例挂载到数据的`__ob__`。
 - 根据数据的类型做处理
-  - 如果是数组类型，兼容`__proto__`的去更改数据的原型链，这一步的目的是[重写数组的一些方法](todo)，使其中元素能够变为响应式对象。再对数组中的元素调用`observe`方法，使得每个元素都有独立的`Observer`。
+  - 如果是数组类型，兼容`__proto__`的去更改数据的原型链，这一步的目的是[重写数组的一些方法](#TODO)，使其中元素能够变为响应式对象。再对数组中的元素调用`observe`方法，使得每个元素都有独立的`Observer`。
   - 如果是其他类型，执行`walk`方法
 - `walk`，对对象属性的所有值执行`defineReactive`方法。
 - `defineReactive`，这里就是至关重要的进行数据劫持的地方。这部分主要的对`getter` `setter`的操作已经在上面的依赖收集、更新派发中介绍了。
