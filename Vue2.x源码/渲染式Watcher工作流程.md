@@ -96,4 +96,4 @@ new Watcher(vm, updateComponent, noop, {
 
 1. `Watcher.update`中根据`sync`，`Watcher`队列这部分的逻辑介绍
 2. 派发更新后，组件更新流程
-3. `Oberser`中为何要重写数组的方法
+3. `Observer`中为何要重写数组的方法
