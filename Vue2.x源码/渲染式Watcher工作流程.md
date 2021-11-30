@@ -74,7 +74,7 @@ new Watcher(vm, updateComponent, noop, {
 - 更新派发是由数据的更新触发的，所以在`getter`中开始分析。
 - 先会进行新旧值的比较，如果相同是不会进行后续操作的。
 - 最后执行`dep.notify`，这里实际上就是将该数据`dep`的`subs`中的`Watcher`执行`update`。
-- `update`，根据`sync`，执行不同逻辑，这里[后续进行介绍](#TODO)。最后都是执行`Watcher.run`。
+- `update`，根据`sync`，执行不同逻辑，这里[后续进行介绍](Watcher的执行逻辑.md)。最后都是执行`Watcher.run`。
 - `run`，渲染式`Watcher`中，执行`this.get`，这里我们之前进行了分析，就是调用`updateComponent`，即进行组件的更新，[更新的流程](#TODO)后续进行介绍。
 - 所以在这里个人感觉上面的问题被解决掉，数据变化后通知的是最靠近的父节点组件进行组件更新。
 
@@ -94,6 +94,5 @@ new Watcher(vm, updateComponent, noop, {
 
 ##### TODO
 
-1. `Watcher.update`中根据`sync`，`Watcher`队列这部分的逻辑介绍
-2. 派发更新后，组件更新流程
-3. `Observer`中为何要重写数组的方法
+1. 派发更新后，组件更新流程
+2. `Observer`中为何要重写数组的方法
