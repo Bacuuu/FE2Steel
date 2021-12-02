@@ -1,8 +1,8 @@
-在派发更新的过程中，会执行`Watcher.update`。对于更新的派发，并不是马上生效的，我们来解析下这个地方的逻辑。
+在 Vue 源码中，可以知道派发更新的过程中，会执行`Watcher.update`。而且对于更新的派发，并不是马上生效的，我们来解析下这个地方的逻辑。
 
-#### update函数
+#### update 函数
 
-` update`函数内容如下，`this.lazy`是计算属性的逻辑，在这里我们不做讨论。后面的逻辑是根据`this.sync`进行处理，但是我在v2.x的官方文档中并没有`watcher`配置项为`sync`的介绍。这里先不对`sync`的来源做讨论，进行后续逻辑的介绍。
+` update`函数内容如下，`this.lazy`是计算属性的逻辑，在这里我们不做讨论。后面的逻辑是根据`this.sync`进行处理，但是我在 v2.x 的官方文档中并没有`watcher`配置项为`sync`的介绍。这里先不对`sync`的来源做讨论，进行后续逻辑的介绍。
 
 ```javascript
   update () {
@@ -17,13 +17,11 @@
   }
 ```
 
-#### run函数
+#### run 函数
 
 执行`this.get()`，对比新旧值并调用回调函数。在渲染式`Watcher`中，这里会调用`updateComponent`进行组件的更新。
 
-
-
-#### queueWatcher执行流程
+#### queueWatcher 执行流程
 
 我们主要对`sync === false`时的`queueWatcher(this)`进行分析。`queueWatcher`定义在`scheduler.js`，从命名可以看出是用于调度相关。
 
@@ -44,11 +42,9 @@
 - `flushing`是在`flushSchedulerQueue`真正开始执行后才置为`true`，又它创建的分支代码也适用于控制根据不同情况如何插入队列`queue`
 - `waiting`，确保不会重复执行`flushSchedulerQueue`，只有上一个执行结束才会开始下一次的调用。
 
+#### flushSchedulerQueue 执行过程
 
-
-#### flushSchedulerQueue执行过程
-
-queueWatcher最终是执行了`flushSchedulerQueue`，这里哦我们就来分析下它的逻辑
+queueWatcher 最终是执行了`flushSchedulerQueue`，这里哦我们就来分析下它的逻辑
 
 - 如同我们上面所介绍的，首先将队列`queue`中的`Watcher`按照`id`从小到大排序。
 - 然后就是遍历队列，依次执行`Watcher`的`run`。
@@ -60,7 +56,4 @@ queueWatcher最终是执行了`flushSchedulerQueue`，这里哦我们就来分�
 2. 用户自定义`Watcher`优先于渲染`watcher`
 3. 当组件在父组件`watcher`执行过程中被`destroy`，不会执行`Watch.update`，则该`watcher`能够被跳过，这也是由父到子执行的原因。
 
-
-
 由上面的分析过程可以看到，`Watcher`并非立即执行的，而是进入队列后在某一时刻进行统一的运行。至于何时才运行，这取决于`nextTick`函数，后面我们再来介绍它。
-
