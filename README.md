@@ -12,5 +12,7 @@
 
 [Watcher执行逻辑](./Vue2.x源码/Watcher的执行逻辑.md)
 
+[Observer中对Array方法的重写](./Vue2.x源码/Observer中对Array方法的重写.md)
+
 ## HTTP
 [HTTP缓存](./HTTP/HTTP缓存.md)
