@@ -14,6 +14,8 @@
 
 [Observer中对Array方法的重写](./Vue2.x源码/Observer中对Array方法的重写.md)
 
+[解析nextTick](./Vue2.x源码/解析nextTick.md)
+
 ## HTTP
 [HTTP缓存](./HTTP/HTTP缓存.md)
 
