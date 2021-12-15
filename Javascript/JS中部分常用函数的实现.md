@@ -14,15 +14,15 @@
 
 ```javascript
 const _new = function (func) {
-  	// 1
+    // 1
     var res = {};
-  	// 2
+    // 2
     if (func.prototype !== null) {
         res.__proto__ = func.prototype;
     }
-  	// 3
+    // 3
     var ret = func.apply(res, Array.prototype.slice.call(arguments, 1));
-  	// 4
+    // 4
     if ((typeof ret === "object" || typeof ret === "function") && ret !== null) {
         return ret;
     }
@@ -56,15 +56,17 @@ _new(A)
 
 - JSON.stringify
 
+  因为传入的值有很多可能性，具体转化细节见[MDN的描述](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#%E6%8F%8F%E8%BF%B0)
+
   ```javascript
   const stringify = (function () {
-    		// toString方法
+        // toString方法
         var toString = Object.prototype.toString;
-    		// 兼容判断是否数组
+        // 兼容判断是否数组
         var isArray = Array.isArray || function (a) { return toString.call(a) === '[object Array]'; };
         // 转译 字典
-    		var escMap = {'"': '\\"', '\\': '\\\\', '\b': '\\b', '\f': '\\f', '\n': '\\n', '\r': '\\r', '\t': '\\t'};
-    		// 转译 函数
+        var escMap = {'"': '\\"', '\\': '\\\\', '\b': '\\b', '\f': '\\f', '\n': '\\n', '\r': '\\r', '\t': '\\t'};
+        // 转译 函数
         var escFunc = function (m) { return escMap[m] || '\\u' + (m.charCodeAt(0) + 0x10000).toString(16).substr(1); };
         var escRE = /[\\"\u0000-\u001F\u2028\u2029]/g;
         return function stringify(value) {
@@ -80,7 +82,7 @@ _new(A)
           } else if (typeof value === 'object') {
             // 引用类型
             if (typeof value.toJSON === 'function') {
-            	// 使用toJSON，例如Date对象
+              // 使用toJSON，例如Date对象
               return stringify(value.toJSON());
             } else if (isArray(value)) {
               // 数组，递归处理元素并拼接
@@ -101,3 +103,48 @@ _new(A)
         };
       })()
   ```
+
+
+
+#### call
+
+指定函数的`this`，并执行函数。这里的主要问题是如何使函数的上下文更换，很容易想到，将这个函数设置为属性然后进行调用即可。
+
+1. 将函数赋值给新上下文(`content`)的，作为唯一属性（Symbol）
+2. 截取传入函数的参数值
+3. 在上下文(`content`)中调用函数
+4. 删除附加给上下文(`content`)的属性
+
+```javascript
+Function.prototype._call = function(content = window) {
+  	const symbol = Symbol()
+    content.symbol = this;
+    let args = [...arguments].slice(1);
+    let result = content.symbol(...args);
+    delete content.symbol;
+    return result;
+}
+
+```
+
+
+
+#### apply
+
+同`call`，只是处理入参有点区别
+
+```javascript
+Function.prototype._apply = function(content = window) {
+  	const symbol = Symbol()
+    content.symbol = this;
+    let args = arguments[1] || [];
+    let result = content.symbol(...args);
+    delete content.symbol;
+    return result;
+}
+```
+
+
+
+
+
