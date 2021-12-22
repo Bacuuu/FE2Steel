@@ -79,7 +79,7 @@ const b = object(o)
 
 ​		其实上述的`object`方法是`object.create`的一种`polyfill`实现，在ES5+中，能够使用`Object.create()`达到相同的作用，我们顺便看看`Objtct.create`的描述：
 
->  **`Object.create()`**方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
+>  `Object.create()`方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
 
 ​		这样方法的缺点和原型链差不多，指向原型同一属性，会被多个子实例共用；无法进行参数传递。
 
