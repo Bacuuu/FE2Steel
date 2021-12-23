@@ -1,5 +1,7 @@
 👋本文总结下`javascript`各种常用函数代码的实现
 
+参考自[「中高级前端面试」JavaScript手写代码无敌秘籍](https://juejin.cn/post/6844903809206976520#heading-10)、[前端面试常见的手写功能](https://juejin.cn/post/6873513007037546510)
+
 #### new
 
 [它做了什么](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new)：
@@ -144,7 +146,40 @@ Function.prototype._apply = function(content = window) {
 }
 ```
 
+#### bind
 
+> `bind()` 方法创建一个新的函数，在 `bind()` 被调用时，这个新函数的 `this` 被指定为 `bind()` 的第一个参数，而其余参数将作为新函数的参数，供调用时使用。
+>
+> `function.bind(thisArg[, arg1[, arg2[, ...]]])`
 
+​		`call` `apply` `bind`作用都是改变函数上下文，前两者只是在单次调用时改变，而`bind`是创建一个具有新上下文的函数，也不是马上调用。
 
+​		`bind`函数第一个参数是新的上下文，后续参数是对函数参数进行依次填充。对于返回函数，如果继续传入参数值，则是放到`bind`时的参数后面。
+
+```javascript
+
+Function.prototype._bind = function(content) {
+  	// 确定调用者是函数类型
+    if(typeof this != "function") {
+        throw Error("caller is not a function")
+    }
+  	// fn是 修改函数 的原型
+    let fn = this;
+  	// 过滤 获取 除去content的参数
+    let args = [...arguments].slice(1);
+    // 构造一个函数，进行上下文更改的调用
+  	// 将参数进行拼接
+    let resFn = function() {
+      	// 这里的 instanceof 判断的作用在于
+      	// 如果将该函数作为构造函数，this instanceof resFn === true
+        return fn.apply(this instanceof resFn ? this : content,args.concat(...arguments) )
+    }
+    // 创建新构造函数，和当前函数的prototype指向同一实例
+    function tmp() {}
+    tmp.prototype = this.prototype;
+  	// 确保新的函数 和 原函数 保持原有的继承关系
+    resFn.prototype = new tmp();
+    return resFn;
+}
+```
 
