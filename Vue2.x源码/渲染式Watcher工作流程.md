@@ -95,4 +95,4 @@ new Watcher(vm, updateComponent, noop, {
 ##### TODO
 
 1. 派发更新后，组件更新流程
-2. `Observer`中为何要重写数组的方法
+2. ~~`Observer`中为何要重写数组的方法~~
