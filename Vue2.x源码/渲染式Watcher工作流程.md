@@ -58,7 +58,7 @@ new Watcher(vm, updateComponent, noop, {
 - 将该`Watcher`作为全局计算`Watcher`
 - 执行`this.getter`也就是`updateComponent`，调用`_update`，此时会触发子元素的`getter`
   - 其中`_update(_vm.render())`
-  - `render`将实例渲染为`VNode，会对`vm`数据进行访问，从而触发`getter`
+  - `render`将实例渲染为`VNode`，会对`vm`数据进行访问，从而触发`getter`
   - ~~`updateComponent`调用链：`_update -> __patch__ -> createElm -> createComponent -> init(create-component.js) -> $mount `~~
   - 这部分涉及到组件的知识，目前我的理解是这样的，后续复习时再和这部分结合一下
   - 这里假设有一个数据的`getter`被触发，会执行`dep.depend`，当前`Watcher`中就会添加该`Dep`进`newDeps`，同时`Dep`会添加当前`Watcher`进`subs`。两者建立了关联
