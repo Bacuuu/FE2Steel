@@ -1,4 +1,4 @@
-		我们直接看初始化`watch`的地方。还是定义于`initState`函数中
+我们直接看初始化`watch`的地方。还是定义于`initState`函数中
 
 ```javascript
   if (opts.watch && opts.watch !== nativeWatch) {
