@@ -16,6 +16,10 @@
 
 [解析nextTick](./Vue2.x源码/解析nextTick.md)
 
+[computed Watcher工作流程](./Vue2.x源码/computed%20Watcher工作流程.md)
+
+[自定义Watcher工作流程](./Vue2.x源码/自定义Watcher工作流程.md)
+
 ## HTTP
 [HTTP缓存](./HTTP/HTTP缓存.md)
 
