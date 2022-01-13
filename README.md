@@ -20,6 +20,8 @@
 
 [自定义Watcher工作流程](./Vue2.x源码/自定义Watcher工作流程.md)
 
+[props源码解析](./Vue2.x源码/props源码解析.md)
+
 ## HTTP
 [HTTP缓存](./HTTP/HTTP缓存.md)
 
