@@ -10,6 +10,8 @@
 [从Vue源码打包讲起](./Vue2.x源码/从Vue源码打包开始讲起.md)
 
 [\$mount函数在做什么](./Vue2.x源码/$mount函数在做什么.md)
+
+[render函数那些事](./Vue2.x源码/render函数.md)
 ### 响应式原理
 [响应式原理中 Observer、Watcher、Dep 代码梳理](./Vue2.x源码/响应式原理中Observer、Watcher、Dep代码梳理.md)
 
