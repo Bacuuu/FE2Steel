@@ -18,6 +18,8 @@
 [Vue.extend](./Vue2.x源码/Vue.extend.md)
 
 [Vue.component](./Vue2.x源码/Vue.component.md)
+
+[Vue组件创建](./Vue2.x源码/Vue组件创建.md)
 ### 响应式原理
 [响应式原理中 Observer、Watcher、Dep 代码梳理](./Vue2.x源码/响应式原理中Observer、Watcher、Dep代码梳理.md)
 
