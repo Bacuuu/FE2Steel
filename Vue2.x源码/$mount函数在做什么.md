@@ -97,7 +97,7 @@ Vue.prototype.$mount = function (
 }
 ```
 
-​		实际是返回`mountComponent`函数调用的返回值，以下是`countComponent`的精简代码。
+​		实际是返回`mountComponent`函数调用的返回值，以下是`mountComponent`的精简代码。
 
 ```javascript
 export function mountComponent (
