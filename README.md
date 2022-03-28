@@ -24,6 +24,8 @@
 [Vue组件-异步组件](./Vue2.x源码/Vue组件-异步函数组件.md)
 
 [Patch--VNode的首次渲染](./Vue2.x源码/VNode的首次渲染.md)
+
+[视图更新流程及Diff](./Vue2.x源码/视图更新流程及Diff.md)
 ### 响应式原理
 [响应式原理中 Observer、Watcher、Dep 代码梳理](./Vue2.x源码/响应式原理中Observer、Watcher、Dep代码梳理.md)
 
