@@ -358,7 +358,7 @@ function mergeHook (f1: any, f2: any): Function {
 - 由于在render函数中，`createComponent`函数首个参数传入为`tag`，而一种可能下`tag`是非字符串类型的，所以我们先对`tag`（这里的`Ctor`）进行类型判断。
   - `Object`，当作参数传入`extend`，生成子类构造函数
   - `function`，通过`cid`继续判断
-    - 异步组件，详见[Vue中异步组件源码]()
+    - 异步组件，详见[Vue组件-异步组件](./Vue组件-异步函数组件.md)
     - 组件构造函数，后续对该情况处理
 - 通过`resolveConstructorOptions`对参数进行合并更新
 - `transformModel`，对`model`参数进行处理，[单独说明]()
