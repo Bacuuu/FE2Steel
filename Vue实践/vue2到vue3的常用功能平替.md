@@ -123,5 +123,32 @@ emits('change', checkedTag)
 - 要获取类型定义，使用`InstanceType<typeof DemoTest> | null`
 - 通过`.value?.`进行暴露出来的方法、值的使用。
 
+#### 路由监听
+
+`Vue2`
+
+```javascript
+watch: {
+	'$route.path': function (n, o) {
+        // do sth
+    }
+}
+```
+
+在`Vue2`中，对于`watch`的键为字符串的情况，会去在`this`下进行查找，从而达到监听`this.$route.path`的目的
+
+在`Vue3`中没有`this`上下文，对路由监听实现如下
+
+```typescript
+const route = useRoute()
+watch(() => route.path, (n) => {
+    // do sth
+})
+```
+
+这里直接使用`function`作为键，达到监听`route.path`的目的。不能直接使用`route.path`是因为它是个字符串，`Vue3`的侦听来源类型说明如下
+
+> `watch` 的第一个参数可以是不同形式的“来源”：它可以是一个 ref (包括计算属性)、一个响应式对象、一个 getter 函数、或多个来源组成的数组：
+
 
 
