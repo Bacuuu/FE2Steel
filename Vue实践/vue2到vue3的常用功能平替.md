@@ -67,6 +67,26 @@ const props = withDefaults(defineProps<Props>(), {
   
   ```
 
+#### 组件事件定义
+
+```typescript
+// event-demo.vue
+// 定义
+const emits = defineEmits<{(e: 'change', tags: Array<string>): void}>()
+// 触发
+emits('change', checkedTag)
+```
+
+该方法对于定义时定义的`e`,`tags`会警告未使用，不知道是IDE原因还是目前Vue的缺陷。
+
+事件监听方法和`Vue2`相同
+
+```vue
+<event-demo @change="dosth"></event-demo>
+```
+
+
+
 #### 通过ref调用子组件内部方法
 
 **子组件**
