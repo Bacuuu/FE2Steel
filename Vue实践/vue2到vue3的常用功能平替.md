@@ -150,5 +150,65 @@ watch(() => route.path, (n) => {
 
 > `watch` 的第一个参数可以是不同形式的“来源”：它可以是一个 ref (包括计算属性)、一个响应式对象、一个 getter 函数、或多个来源组成的数组：
 
+#### 扩充全局属性
 
+在`Vue2`中，我们可以在`Vue`构造函数上挂载一些数据、方法，以供全局使用。
+
+```javascript
+// main.js
+import axios from 'axios'
+Vue.prototype.$axios = axios
+```
+
+`Vue3`提供了[app.config.globalProperties](https://staging-cn.vuejs.org/api/application.html#appconfigglobalproperties)对象
+
+```typescript
+// main.ts
+import axios from 'axios'
+import { createApp } from 'vue'
+import App from './App.vue'
+
+const app = createApp(App)
+app.config.globalProperties.$axios = axios
+```
+
+使用全局属性
+
+```vue
+
+<script lang="ts" setup>
+import { getCurrentInstance } from 'vue'
+
+// 先获取实例
+const app = getCurrentInstance()
+
+// 通过proxy获取到$axios
+app.proxy.$axios('/')
+</script>
+```
+
+上面的使用方法中的`$axios`类型定义是`any`，这显然不友好。官方也提供了[相应方法](https://staging-cn.vuejs.org/guide/typescript/options-api.html#augmenting-global-properties)
+
+**全局属性类型扩展**
+
+- 新建类型定义，这里在`src`下新建`custom.d.ts`文件
+
+```typescript
+// /src/custom.d.ts
+import axios from 'axios'
+
+declare module 'vue' {
+  interface ComponentCustomProperties {
+    $axios: typeof axios
+  }
+}
+```
+
+- `tsconfig.json`中包含该`ts`文件
+
+```json
+{
+	"include": ["src/custom.d.ts"],
+}
+```
 
