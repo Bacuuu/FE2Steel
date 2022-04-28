@@ -242,4 +242,40 @@ const menu = ref<InstanceType<typeof Menu> | any>(null)
 > `vue-tsc`，其文档解释为`Vue 3 command line Type-Checking tool base on IDE plugin [Volar](https://github.com/johnsoncodehk/volar).`
 
 - 既然看到了`volar`，而且我们vscode中也确实有这个插件，去看下`vue-tsc`依赖，有个版本为`0.29.8`的`@volar/shared`依赖。再看`volar`插件版本为`0.34.10`。尝试更新`vue-tsc`为最新版本`0.33.9`。
-- 打包成功，不太清楚该流程是否是解决问题的真正方法，但是这样操作后我这边是打包成功的。
+- 打包成功，猜测升级`vue-tsc`版本这一步骤是解决该问题的真正方法。
+- 总结：通过`defineExpose`将组件方法暴露，父组件使用后TS报错，升级`vue-tsc`版本后解决。
+
+#### vite打包部署后浏览器报错Unknown variable dynamic import
+
+能够进入部分页面，但是某些页面报错`Error: Unknown variable dynamic import: ../pages/blogs/List.vue`。
+
+很明显是因为动态引入没有生效，而且是对于嵌套路由的子路由页面会报错。这里我的实现方式是通过对`router.config.ts`类树状结构进行树遍历，通过读取本身的`component`字段，转换为动态引入。
+
+```typescript
+// 原本
+{
+    name: 'login',
+    component: 'Login/Index.vue'
+}
+// 转换后
+{
+    name: 'login',
+    component: () => import(`../pages/${component}.vue`)
+}
+```
+
+既然这样不能实现，只有换种方式进行。在`vite`的[Glob导入](https://cn.vitejs.dev/guide/features.html#glob-import)中有提到从文件系统中导入模块。我们的实现变成了这样
+
+```typescript
+// 将../pages下所有vue加载
+let componentsModules = import.meta.glob('../pages/**/*.vue')
+// 通过文件路径进行匹配
+const component = componentsModules[`../pages/${component}.vue`]
+```
+
+现在问题已经解决了，但是产生了一个问题，通过这样的导入方法，如果路由中没有用到`componentsModules`下的某文件，打包是否会打出该文件。尝试新建了一个文件然后不进行引入，打包时仍然将该文件输出了。但是`vite`关于`glob`有这样一段文字。
+
+> 匹配到的文件默认是懒加载的，通过动态导入实现，并会在构建时分离为独立的 chunk。
+
+虽然这里打包会构建相关文件，但是在先撒谎给你使用过程中并不会去引入，因为逻辑中没有使用到该模块。
+
