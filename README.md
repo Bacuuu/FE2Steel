@@ -48,6 +48,7 @@
 ## Vue实践
 [vue2到vue3的常用功能平替](./Vue实践/vue2到vue3的常用功能平替.md)
 
+[Vue3写一个拖拽上传组件](./Vue实践/Vue3写一个拖拽上传组件.md)
 ## HTTP
 [HTTP缓存](./HTTP/HTTP缓存.md)
 
