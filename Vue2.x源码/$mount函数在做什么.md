@@ -5,6 +5,7 @@
 ​		下面是`entry-runtime-with-compiler`版本对`$mount`方法重写的部分。
 
 ```javascript
+// 缓存本身的mount方法
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,
@@ -51,7 +52,7 @@ Vue.prototype.$mount = function (
       }
     } else if (el) {
       // 实在没有template，根据el进行获取
-      // outerHTML 内容包含描述元素及其后代的序列化HTML片段
+      // outerHTML 内容包含描述元素及其后代的序列化HTML片段，即当前元素及后代元素的HTML字符串
       template = getOuterHTML(el)
     }
     if (template) {
@@ -83,7 +84,15 @@ Vue.prototype.$mount = function (
 }
 ```
 
-​		主要的逻辑在代码中进行了注释，该版本的代码最终也是调用公共的`$mount`方法，进行重写的目的是确保`$options`上有`render`方法，处理逻辑根据不同的`el`和`template`进行`render`函数的生成。其实这里也解释了`compiler`版本的含义，`entry-runtime-with-compiler`和`entry-runtime`区别在于这段`$mount`的重写，官方对两者差异解释在[这里](https://cn.vuejs.org/v2/guide/installation.html#%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%BC%96%E8%AF%91%E5%99%A8-vs-%E5%8F%AA%E5%8C%85%E5%90%AB%E8%BF%90%E8%A1%8C%E6%97%B6)。在使用脚手架时我们实际是使用的`runtime`版本，那我们也没有人为传入`render`函数，也只是写了模板，填入`Vue`的选项而已。其实这一步脚手架或者`webpack`帮我们做了，当使用 `vue-loader` 或 `vueify` 的时候，`*.vue` 文件内部的模板会在构建时预编译成 JavaScript。
+​		主要的逻辑在代码中进行了注释，该版本的代码最终也是调用公共的`$mount`方法，进行重写的目的是确保`$options`上有`render`方法，处理逻辑根据不同的`el`和`template`进行`render`函数的生成。通过降级处理，保证`template`的存在，再通过`template`创建`render`函数。降级依次是
+
+1. 用传入的`template`
+   1. 是字符串，如果首字母是`#`，识别为选择器，使用对应dom元素的`innerHtml`作为`template`，否则直接使用该字符串
+   2. 是dom元素，，使用该元素的`innerHTML`，
+   3. 其他直接警告并终止处理
+2. `template`不存在，使用传入的`el`的`outerHTML`
+
+​		其实这里也解释了`compiler`版本的含义，`entry-runtime-with-compiler`和`entry-runtime`区别在于这段`$mount`的重写，官方对两者差异解释在[这里](https://cn.vuejs.org/v2/guide/installation.html#%E8%BF%90%E8%A1%8C%E6%97%B6-%E7%BC%96%E8%AF%91%E5%99%A8-vs-%E5%8F%AA%E5%8C%85%E5%90%AB%E8%BF%90%E8%A1%8C%E6%97%B6)。在使用脚手架时我们实际是使用的`runtime`版本，那我们也没有人为传入`render`函数，也只是写了模板，填入`Vue`的选项而已。其实这一步脚手架或者`webpack`帮我们做了，当使用 `vue-loader` 或 `vueify` 的时候，`*.vue` 文件内部的模板会在构建时预编译成 JavaScript。
 
 ​		下面我们来看下运行时和编译器+运行时两个版本都在使用的原味`$mount`
 
