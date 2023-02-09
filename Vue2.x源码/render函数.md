@@ -28,7 +28,7 @@
   }
 ```
 
-​		上面的代码主要作用是`vnode`的产生，正常情况`vnode`来自于`render.call(vm.renderProxy, vm.$createElement)`，其中`render`函数就是我们传入构造函数的参数或者是通过`template`生成，这点我们在 [\$mount函数在做什么](./$mount函数在做什么.md) 中有介绍。那接下来的重点就是这个`vm.$createElement`函数。
+​		上面的代码主要作用是`vnode`的产生，正常情况`vnode`来自于`render.call(vm._renderProxy, vm.$createElement)`，其中`render`函数就是我们传入构造函数的参数或者是通过`template`生成，这点我们在 [\$mount函数在做什么](./$mount函数在做什么.md) 中有介绍。那接下来的重点就是这个`vm.$createElement`函数。
 
 ​		在`_init`函数中执行了`initRender(vm)`，其中涉及`vm.$createElement`的实现。
 
@@ -74,7 +74,7 @@ Vue.component('anchored-heading', {
 
 ​		如果我们自定义`render`，但是仍然使用的`compiler`版本，并不会进入模板编译，而是使用公共`render`方法，这和使用`runtime`版本是一致的。目前我们知道了，如果自定义`render`，是使用的`$createElement`方法，那`_c`方法在哪里体现呢。
 
-​		`render`职责是为生成`VNode`，当我们传入模板后，将模板编译为`render`函数，这一步实际上就已经决定了`render`函数本身是什么样了。在介绍`$mount`时，我们可以知道`render`函数是通过`compileToFunctions`函数生成的。这里我们不去深究这个函数，我们只需要知道在这其中经过了两个过程：
+​		`render`职责是生成`VNode`，当我们传入模板后，将模板编译为`render`函数，这一步实际上就已经决定了`render`函数本身是什么样了。在介绍`$mount`时，我们可以知道`render`函数是通过`compileToFunctions`函数生成的。这里我们不去深究这个函数，我们只需要知道在这其中经过了两个过程：
 
 1. 将模板解析为AST
 2. 将AST生成渲染函数
@@ -125,7 +125,7 @@ export function createElement (
   children: any,
   // 子节点规范的类型
   normalizationType: any,
-  // 子节点规范化方式
+  // 子节点规范化方式，自定义render为true
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
   // 由于data是可选参数，这里是做参数适配。
@@ -167,7 +167,7 @@ export function _createElement (
     // in case of component :is set to falsy value
     return createEmptyVNode()
   }
-  // 不太明白用意，默认插槽
+  // 不太明白用意，插槽相关逻辑
   // support single function children as default scoped slot
   if (Array.isArray(children) &&
     typeof children[0] === 'function'
@@ -177,6 +177,7 @@ export function _createElement (
     children.length = 0
   }
   // 分情况 子节点规范化，专门提出来说明1
+  // 用户自定义render
   if (normalizationType === ALWAYS_NORMALIZE) {
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
@@ -195,8 +196,9 @@ export function _createElement (
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
+        // pre应该是跳过编译的v-pre
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
-      // component
+      // component，校验有没有相关组件名和这个tag相同的
       // 是注册组件的情况，直接使用createComponent
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
@@ -233,7 +235,7 @@ export function _createElement (
 ##### 子节点规范化
 
 ```javascript
-// 适用于模板生成
+// 适用于非自定义render，因为函数组件可能包含数组
 // children中元素还有数组，直接将children内部数组释放出来平级，将children打平
 export function simpleNormalizeChildren (children: any) {
   for (let i = 0; i < children.length; i++) {
@@ -322,7 +324,7 @@ function normalizeArrayChildren (children: any, nestedIndex?: string): Array<VNo
   - 是基本类型，转化为`TextVNode`，合并`TextVNode`
   - 是VNode
     - 根据情况进行合并`TextVNode`
-    - children是`Vlist`（根据`_isVList`判断），根据条件更新key❓
+    - children是`Vlist`（根据`_isVList`判断），和`v-for`相关，根据条件更新key❓
 
 ​		合并`VNode`的逻辑是，使用`last`和`lastIndex`记录当前已经规范化结果的最后一个点，如果该点为`TextVNode`且当前待处理的点也为`TextVNode`，可以直接进行合并。如果不合并，会直接将当前待处理的点也放入`res`最后，导致有两个连续的`TextVNode`。
 
