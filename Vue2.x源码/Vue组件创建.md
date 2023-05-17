@@ -45,6 +45,7 @@ export function resolveAsset (
   const PascalCaseId = capitalize(camelizedId)
   // 将驼峰再首字母大写，再次尝试判断
   if (hasOwn(assets, PascalCaseId)) return assets[PascalCaseId]
+  // 由于hasOwn只能查找自身属性，不查找原型链属性。再从原型链查一次
   // fallback to prototype chain
   const res = assets[id] || assets[camelizedId] || assets[PascalCaseId]
   if (process.env.NODE_ENV !== 'production' && warnMissing && !res) {

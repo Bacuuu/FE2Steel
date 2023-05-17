@@ -52,17 +52,18 @@ export function initExtend (Vue: GlobalAPI) {
     extendOptions = extendOptions || {}
     const Super = this
     const SuperId = Super.cid
-    // 获取我们传入的
+    // 获取我们缓存的构造函数
     const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
     if (cachedCtors[SuperId]) {
       return cachedCtors[SuperId]
     }
-
+	
     const name = extendOptions.name || Super.options.name
     if (process.env.NODE_ENV !== 'production' && name) {
       validateComponentName(name)
     }
-		// 构建子类，使用_init方法，和`core/instance/index.js`中相同
+    // 构建子类，使用_init方法，和`core/instance/index.js`中相同
+    // 这里的options才是我们平时用传入的
     const Sub = function VueComponent (options) {
       this._init(options)
     }
